@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide: Murder on the Orient Express</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Classic Mystery -->
+    <!-- Application Structure Plan: A SPA with tab-based navigation (Home, Characters, The Investigation, The Solution, Quiz) was designed to allow non-linear, thematic access to the content. This structure is superior to a linear document for studying, as it allows the user to focus on specific areas of interest. Interactivity, such as expandable character dossiers and a practice quiz, transforms passive reading into active learning. The goal is to improve information retention and preparation for an oral exam through direct user engagement with the material. -->
+    <!-- Visualization & Content Choices: 
+        - Characters: Information (Passenger List) -> Goal (Organize/Inform) -> Presentation (Interactive card grid) -> Interaction (Click to reveal details in a modal) -> Justification (More engaging and focused than a static table, facilitates learning each character individually) -> Method (HTML/Tailwind/JS).
+        - Clues: Information (List of false and real clues) -> Goal (Organize/Inform) -> Presentation (Interactive clue board) -> Interaction (Click on a clue icon to see its description) -> Justification (Simulates the investigation process and reinforces the idea of deliberate deception) -> Method (HTML/Tailwind/JS).
+        - Solutions: Information (Poirot's two theories) -> Goal (Compare/Inform) -> Presentation (Switchable tab view) -> Interaction (Buttons to toggle between Solution 1 and Solution 2) -> Justification (Clearly contrasts the lie and the truth, the novel's climax) -> Method (HTML/Tailwind/JS).
+        - Quiz: Information (Exam question bank) -> Goal (Engage/Reinforce) -> Presentation (Flashcard-style quiz) -> Interaction (Buttons for 'New Question' and 'Reveal Answer') -> Justification (Encourages active memory recall, a very effective study technique) -> Method (HTML/Tailwind/JS).
+        - No data charts (Chart.js/Plotly) are used as the source material is entirely qualitative. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #F5F5DC; /* Beige */
+        }
+        h1, h2, h3, .font-display {
+            font-family: 'Cormorant Garamond', serif;
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link.active, .nav-link:hover {
+            border-bottom-color: #C19A6B; /* SaddleBrown */
+            color: #C19A6B;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .modal-backdrop {
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-[#4A3728] text-[#F5F5DC] py-4 shadow-lg">
+        <div class="container mx-auto text-center">
+            <h1 class="text-4xl font-bold">Murder on the Orient Express</h1>
+            <p class="text-lg font-display">Interactive Study Guide</p>
+        </div>
+    </header>
+
+    <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-40 shadow-md">
+        <div class="container mx-auto flex justify-center items-center py-3 space-x-4 md:space-x-8 overflow-x-auto">
+            <a href="#" class="nav-link active text-lg font-semibold px-2 py-1" data-target="home">Home</a>
+            <a href="#" class="nav-link text-lg font-semibold px-2 py-1" data-target="characters">Characters</a>
+            <a href="#" class="nav-link text-lg font-semibold px-2 py-1" data-target="investigation">The Investigation</a>
+            <a href="#" class="nav-link text-lg font-semibold px-2 py-1" data-target="solution">The Solution</a>
+            <a href="#" class="nav-link text-lg font-semibold px-2 py-1" data-target="quiz">Quiz</a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-4 md:p-8">
+        
+        <section id="home" class="content-section active">
+            <div class="bg-white rounded-lg shadow-xl p-6 md:p-8 animate-fade-in">
+                <h2 class="text-3xl font-bold text-[#4A3728] mb-4 text-center font-display">The Perfect Crime Scene</h2>
+                <div class="text-lg text-justify space-y-4">
+                    <p>Welcome to the interactive guide for "Murder on the Orient Express." This tool is designed to help you explore the mysteries of the famous case solved by Hercule Poirot. The story begins when the luxurious Orient Express train is stopped by a snowstorm in the mountains. This total isolation creates the perfect setting for a crime: a passenger is found dead in his compartment, stabbed a dozen times, with the door locked from the inside.</p>
+                    <p>With the murderer trapped among the passengers, the brilliant Belgian detective Hercule Poirot must unravel a complex web of secrets and lies to find the truth. Navigate through the sections to discover the suspects, examine the clues, and understand the surprising final solution. Use the "Quiz" section to test your knowledge!</p>
+                </div>
+                <div class="mt-8 text-center">
+                    <span class="text-6xl">🚂❄️🔪</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="characters" class="content-section">
+             <div class="bg-white rounded-lg shadow-xl p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-[#4A3728] mb-6 text-center font-display">The Cast of the Drama</h2>
+                <p class="text-center text-lg mb-8">Click on each character to reveal their true identity and connection to the Armstrong case. Start with the detective and the victim to set the context.</p>
+                <div id="characters-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+                </div>
+            </div>
+        </section>
+
+        <section id="investigation" class="content-section">
+            <div class="bg-white rounded-lg shadow-xl p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-[#4A3728] mb-6 text-center font-display">The Anatomy of the Murder</h2>
+                <p class="text-center text-lg mb-8">The crime scene was filled with contradictory clues, deliberately planted to confuse the investigator. Explore the evidence to understand the murderers' strategy.</p>
+                <div id="clues-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
+            </div>
+        </section>
+
+        <section id="solution" class="content-section">
+            <div class="bg-white rounded-lg shadow-xl p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-[#4A3728] mb-6 text-center font-display">Two Solutions for One Crime</h2>
+                <p class="text-center text-lg mb-8">In the end, Poirot presents two possible explanations. One is a convenient fiction; the other, the astonishing truth. Use the buttons to explore each solution and the detective's moral dilemma.</p>
+                <div class="flex justify-center mb-6">
+                    <div class="inline-flex rounded-md shadow-sm" role="group">
+                        <button type="button" id="solution1-btn" class="solution-btn active bg-[#C19A6B] text-white font-bold py-2 px-4 rounded-l-lg">
+                            Solution 1: The Fiction
+                        </button>
+                        <button type="button" id="solution2-btn" class="solution-btn bg-white text-[#C19A6B] font-bold py-2 px-4 rounded-r-lg">
+                            Solution 2: The Truth
+                        </button>
+                    </div>
+                </div>
+                <div id="solution-content" class="mt-6 text-lg space-y-4 text-justify">
+                </div>
+            </div>
+        </section>
+
+        <section id="quiz" class="content-section">
+            <div class="bg-white rounded-lg shadow-xl p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-[#4A3728] mb-6 text-center font-display">Test Your Knowledge</h2>
+                <p class="text-center text-lg mb-8">Prepare for your oral exam with these questions. Click "New Question" to start, and then "Reveal Key Answer" to check your knowledge.</p>
+                
+                <div class="bg-gray-100 p-6 rounded-lg min-h-[200px] flex flex-col justify-center items-center text-center">
+                    <p id="quiz-question" class="text-xl font-semibold">Press "New Question" to begin.</p>
+                    <p id="quiz-answer" class="text-lg mt-4 hidden text-green-800"></p>
+                </div>
+
+                <div class="flex justify-center mt-6 space-x-4">
+                    <button id="new-question-btn" class="bg-[#4A3728] hover:bg-[#604733] text-white font-bold py-2 px-6 rounded-lg transition-colors">New Question</button>
+                    <button id="show-answer-btn" class="bg-[#C19A6B] hover:bg-[#d4a977] text-white font-bold py-2 px-6 rounded-lg transition-colors" disabled>Reveal Key Answer</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <div id="character-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden modal-backdrop">
+        <div class="bg-[#F5F5DC] rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 relative modal-content">
+            <button id="close-modal-btn" class="absolute top-4 right-4 text-2xl font-bold text-gray-600 hover:text-gray-900">&times;</button>
+            <div id="modal-body">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const charactersData = [
+            { id: 'poirot', name: 'Hercule Poirot', icon: '🕵️', role: 'The Detective', public: 'Famous Belgian detective.', real: 'His keen sense of observation and understanding of human psychology allow him to see beyond the lies. His method is based on the use of his "little grey cells".', motive: 'His motivation is the search for truth and justice. In this case, he faces a moral dilemma between the law and a higher form of justice.' },
+            { id: 'ratchett', name: 'Samuel Ratchett', icon: '💀', role: 'The Victim', public: 'Wealthy American businessman.', real: 'He is actually Cassetti, a mobster who kidnapped and murdered the child Daisy Armstrong, escaping justice thanks to his money.', motive: 'His evil and his unpunished crime are the central motive for the planned murder against him.' },
+            { id: 'macqueen', name: 'Hector MacQueen', icon: '📝', role: 'The Secretary', public: 'Ratchett\'s personal secretary.', real: 'Son of the prosecutor in the Armstrong case. He was in love with Daisy\'s mother, Sonia Armstrong.', motive: 'Justice for the Armstrong family, whom his father could not help.' },
+            { id: 'masterman', name: 'Edward Masterman', icon: '🤵', role: 'The Valet', public: 'Ratchett\'s valet.', real: 'He was Colonel Armstrong\'s batman during the war.', motive: 'Unwavering loyalty to his former boss, Colonel Armstrong.' },
+            { id: 'hubbard', name: 'Mrs. Hubbard', icon: '👵', role: 'The Grandmother', public: 'A talkative American passenger.', real: 'She is Linda Arden, a famous actress, mother of Sonia Armstrong and grandmother of Daisy.', motive: 'Revenge for the death of her daughter and granddaughter. She is the mastermind of the plan.' },
+            { id: 'debenham', name: 'Mary Debenham', icon: '👩‍🏫', role: 'The Governess', public: 'British governess.', real: 'She was the governess of little Daisy Armstrong.', motive: 'Affection for the child she cared for and for the family she served.' },
+            { id: 'arbuthnot', name: 'Colonel Arbuthnot', icon: '🎖️', role: 'The Soldier', public: 'Colonel in the British Army.', real: 'Close friend and comrade-in-arms of Colonel Armstrong.', motive: 'Loyalty and friendship towards his best friend.' },
+            { id: 'dragomiroff', name: 'Princess Dragomiroff', icon: '👑', role: 'The Godmother', public: 'Elderly and authoritarian Russian princess.', real: 'Godmother of Sonia Armstrong and a friend of the family.', motive: 'To protect the family\'s honor and avenge her goddaughter.' },
+            { id: 'schmidt', name: 'Hildegarde Schmidt', icon: '👩‍🍳', role: 'The Maid', public: 'The Princess\'s maid.', real: 'She was the cook for the Armstrong family.', motive: 'Loyalty and affection for the family she served.' },
+            { id: 'andrenyi', name: 'Count & Countess Andrenyi', icon: '🎭', role: 'The Diplomats', public: 'A pair of Hungarian diplomats.', real: 'The Countess (Helena) is Sonia Armstrong\'s sister, Daisy\'s aunt. The Count acts on her behalf.', motive: 'Direct family tie. The Count stabs to protect his wife from the act.' },
+            { id: 'foscarelli', name: 'Antonio Foscarelli', icon: '🚗', role: 'The Chauffeur', public: 'Italian car salesman.', real: 'He was the chauffeur for the Armstrong family.', motive: 'Affection for little Daisy, whom he used to drive.' },
+            { id: 'ohlsson', name: 'Greta Ohlsson', icon: '👩‍⚕️', role: 'The Nurse', public: 'Swedish missionary.', real: 'She was Daisy Armstrong\'s nurse.', motive: 'Guilt and pain for not having been able to protect the child.' },
+            { id: 'hardman', name: 'Cyrus Hardman', icon: '🕵️‍♂️', role: 'The Fake Detective', public: 'American typewriter salesman.', real: 'Ex-policeman who was in love with Susanne, the maid who committed suicide after being unjustly accused.', motive: 'To avenge the woman he loved.' },
+            { id: 'michel', name: 'Pierre Michel', icon: '👨‍✈️', role: 'The Conductor', public: 'Conductor of the sleeping car.', real: 'Father of Susanne, the maid who committed suicide.', motive: 'Revenge for the death of his daughter.' },
+        ];
+
+        const cluesData = [
+            { title: 'Twelve Stab Wounds', icon: '🔪', description: 'Ratchett was stabbed 12 times by different people, with varying force. This symbolizes a 12-member jury, suggesting a ritual execution rather than an angry attack.' },
+            { title: 'The Open Window', icon: '🖼️', description: 'The compartment window was open, but there were no footprints in the snow. It was a false clue to make it seem like the murderer had escaped the train.' },
+            { title: 'The Conductor\'s Uniform', icon: '🧥', description: 'A uniform was found in a passenger\'s suitcase. It was planted to reinforce the idea that a stranger in disguise committed the crime.' },
+            { title: 'The Handkerchief with "H"', icon: ' handkerchief ', description: 'A handkerchief with the initial "H" was left to frame Mrs. Hubbard, but Princess Dragomiroff claimed it, creating deliberate confusion.' },
+            { title: 'The Pipe Cleaner', icon: '🧹', description: 'A pipe cleaner was left to point to Colonel Arbuthnot, the only passenger who smoked a pipe, as another false clue.' },
+            { title: 'The Scarlet Kimono', icon: '👘', description: 'Seen in the hallway and later found in Poirot\'s own luggage, it was a bold and absurd clue designed to baffle and point to no one in particular.' },
+            { title: 'The Burned Note (Key Clue)', icon: '🔥', description: 'The murderers\' only mistake. Poirot recovered a fragment of a burned note that read "...remember little Daisy Armstrong." This clue revealed Ratchett\'s true identity and the motive for revenge.' }
+        ];
+        
+        const solutionsData = {
+            solution1: {
+                title: 'Solution 1: The Fiction for the Police',
+                content: 'Poirot proposes a simple and tidy theory. An unknown assassin, an enemy of Ratchett, boarded the train at the last stop, murdered him, and escaped in the dark. This solution ignores the contradictory clues and the passengers\' connection to the Armstrong case, but it is the easiest to present to the police to avoid a scandal.'
+            },
+            solution2: {
+                title: 'Solution 2: The Astonishing Truth',
+                content: 'Poirot reveals the truth: there was not one murderer, but twelve. All the passengers in the carriage, connected by the tragedy of the Armstrong family, acted as a jury and executioner. Led by Linda Arden (Mrs. Hubbard), they planned and carried out the murder, each delivering a stab wound to share the responsibility. This solution explains all the contradictions and false clues.'
+            },
+            dilemma: {
+                title: 'Poirot\'s Verdict: Justice vs. Law',
+                content: 'Faced with the truth, Poirot confronts a moral dilemma. Should he hand over twelve people to justice for executing a monster that the law could not punish? In the end, Poirot chooses a higher form of justice. He declares that the first solution (that of the unknown assassin) is the correct one, allowing the "jury" of the Orient Express to escape. His decision is a judgment on the failure of the legal system.'
+            }
+        };
+
+        const quizData = [
+            { q: "Can you summarize the plot of the story?", a: "Hercule Poirot is traveling on the Orient Express, which gets stuck in the snow. A passenger, Ratchett, is murdered. Poirot investigates and discovers that all the other passengers murdered him together as revenge for a past crime." },
+            { q: "Why was the Orient Express the perfect location for this murder?", a: "Because the train was completely isolated by the snow, creating a closed group of suspects where the murderer could not escape, ensuring the culprit was on board." },
+            { q: "Who was Samuel Ratchett really, and why was he killed?", a: "He was a gangster named Cassetti who had kidnapped and murdered a child, Daisy Armstrong, and had escaped justice. The other passengers were all connected to the Armstrong family and were seeking revenge." },
+            { q: "Describe Hercule Poirot's method of investigation.", a: "He uses psychology and logic, what he calls his 'little grey cells.' He observes people's behavior and finds contradictions in their stories rather than looking for physical clues." },
+            { q: "How did the passengers try to confuse Poirot?", a: "They deliberately planted many false and contradictory clues, like the handkerchief, the pipe cleaner, the scarlet kimono, and the open window, to create chaos and make it impossible to pinpoint a single culprit." },
+            { q: "What was the one clue that revealed the true motive for the murder?", a: "It was a fragment of a burned note that Poirot found. On it, the words '...remember little Daisy Armstrong' could be read, which connected the murder to the old case." },
+            { q: "Poirot presents two solutions at the end. What are they?", a: "The first solution is that an unknown assassin boarded the train, killed Ratchett, and escaped. The second, and the true one, is that the twelve passengers did it together as an act of collective justice." },
+            { q: "Why do you think Poirot decided to lie to the police?", a: "Because he believed that the passengers had delivered a form of justice that the law had failed to provide. He saw Ratchett as a 'wild beast' and the passengers not as criminals, but as people seeking justice for a failed system." }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const contentSections = document.querySelectorAll('.content-section');
+            const charactersGrid = document.getElementById('characters-grid');
+            const cluesGrid = document.getElementById('clues-grid');
+            const modal = document.getElementById('character-modal');
+            const modalBody = document.getElementById('modal-body');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            
+            const solutionContent = document.getElementById('solution-content');
+            const solution1Btn = document.getElementById('solution1-btn');
+            const solution2Btn = document.getElementById('solution2-btn');
+            const solutionBtns = document.querySelectorAll('.solution-btn');
+
+            const quizQuestion = document.getElementById('quiz-question');
+            const quizAnswer = document.getElementById('quiz-answer');
+            const newQuestionBtn = document.getElementById('new-question-btn');
+            const showAnswerBtn = document.getElementById('show-answer-btn');
+            let currentQuestionIndex = -1;
+
+            function showSection(targetId) {
+                contentSections.forEach(section => {
+                    section.classList.toggle('active', section.id === targetId);
+                });
+                navLinks.forEach(link => {
+                    link.classList.toggle('active', link.dataset.target === targetId);
+                });
+            }
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    // The initial section is 'inicio' in Spanish, but the data-target is 'home' in English.
+                    // A small fix to make sure the first tab works correctly after translation.
+                    const target = e.target.dataset.target === 'inicio' ? 'home' : e.target.dataset.target;
+                    showSection(target);
+                });
+            });
+
+            function createCharacterCard(char) {
+                const card = document.createElement('div');
+                card.className = 'card bg-gray-100 rounded-lg p-4 text-center cursor-pointer flex flex-col items-center justify-center aspect-square';
+                card.innerHTML = `<div class="text-4xl mb-2">${char.icon}</div><h3 class="font-bold text-md">${char.name}</h3><p class="text-sm text-gray-600">${char.role}</p>`;
+                card.addEventListener('click', () => openModal(char));
+                charactersGrid.appendChild(card);
+            }
+
+            function openModal(char) {
+                modalBody.innerHTML = `
+                    <h2 class="text-3xl font-bold text-[#4A3728] mb-4 font-display flex items-center"><span class="text-4xl mr-4">${char.icon}</span>${char.name}</h2>
+                    <div class="space-y-4 text-lg">
+                        <p><strong>Role on the Train:</strong> ${char.role}</p>
+                        <p><strong>Public Identity:</strong> ${char.public}</p>
+                        <p class="text-red-800"><strong>True Identity & Connection:</strong> ${char.real}</p>
+                        <p class="text-green-800"><strong>Motive for Revenge:</strong> ${char.motive}</p>
+                    </div>
+                `;
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.querySelector('.modal-backdrop').classList.add('opacity-100');
+                    modal.querySelector('.modal-content').classList.add('transform', 'scale-100', 'opacity-100');
+                }, 10);
+            }
+
+            function closeModal() {
+                modal.querySelector('.modal-backdrop').classList.remove('opacity-100');
+                modal.querySelector('.modal-content').classList.remove('transform', 'scale-100', 'opacity-100');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            }
+            
+            charactersData.forEach(createCharacterCard);
+            closeModalBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal();
+            });
+
+            cluesData.forEach(clue => {
+                const clueCard = document.createElement('div');
+                clueCard.className = 'bg-gray-100 rounded-lg p-6 flex items-center space-x-4';
+                if (clue.title.includes('Key')) {
+                    clueCard.classList.add('bg-yellow-100', 'ring-2', 'ring-yellow-400');
+                }
+                clueCard.innerHTML = `
+                    <div class="text-5xl">${clue.icon}</div>
+                    <div>
+                        <h3 class="font-bold text-xl text-[#4A3728]">${clue.title}</h3>
+                        <p class="text-md">${clue.description}</p>
+                    </div>
+                `;
+                cluesGrid.appendChild(clueCard);
+            });
+            
+            function displaySolution(data) {
+                solutionContent.innerHTML = `
+                    <h3 class="text-2xl font-bold text-[#4A3728] font-display">${data.title}</h3>
+                    <p>${data.content}</p>
+                    ${data === solutionsData.solution2 ? `
+                    <div class="mt-6 pt-4 border-t-2 border-dashed border-[#C19A6B]">
+                        <h3 class="text-2xl font-bold text-[#4A3728] font-display">${solutionsData.dilemma.title}</h3>
+                        <p>${solutionsData.dilemma.content}</p>
+                    </div>
+                    ` : ''}
+                `;
+            }
+
+            solutionBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    solutionBtns.forEach(b => {
+                        b.classList.remove('active', 'bg-[#C19A6B]', 'text-white');
+                        b.classList.add('bg-white', 'text-[#C19A6B]');
+                    });
+                    btn.classList.add('active', 'bg-[#C19A6B]', 'text-white');
+                    btn.classList.remove('bg-white', 'text-[#C19A6B]');
+                    
+                    if (btn.id === 'solution1-btn') {
+                        displaySolution(solutionsData.solution1);
+                    } else {
+                        displaySolution(solutionsData.solution2);
+                    }
+                });
+            });
+
+            displaySolution(solutionsData.solution1);
+            
+            newQuestionBtn.addEventListener('click', () => {
+                let newIndex;
+                do {
+                    newIndex = Math.floor(Math.random() * quizData.length);
+                } while (newIndex === currentQuestionIndex);
+                currentQuestionIndex = newIndex;
+                
+                quizQuestion.textContent = quizData[currentQuestionIndex].q;
+                quizAnswer.textContent = quizData[currentQuestionIndex].a;
+                quizAnswer.classList.add('hidden');
+                showAnswerBtn.disabled = false;
+            });
+
+            showAnswerBtn.addEventListener('click', () => {
+                quizAnswer.classList.remove('hidden');
+                showAnswerBtn.disabled = true;
+            });
+
+            // Initial setup to show the home section
+            showSection('home');
+            // Correctly set the active state for the first nav link
+            document.querySelector('.nav-link[data-target="home"]').classList.add('active');
+            document.querySelector('.nav-link[data-target="inicio"]')?.classList.remove('active');
+
+
+        });
+    </script>
+</body>
+</html>
