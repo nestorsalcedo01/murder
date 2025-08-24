@@ -174,7 +174,7 @@
             { title: 'Twelve Stab Wounds', icon: '🔪', description: 'Ratchett was stabbed 12 times by different people, with varying force. This symbolizes a 12-member jury, suggesting a ritual execution rather than an angry attack.' },
             { title: 'The Open Window', icon: '🖼️', description: 'The compartment window was open, but there were no footprints in the snow. It was a false clue to make it seem like the murderer had escaped the train.' },
             { title: 'The Conductor\'s Uniform', icon: '🧥', description: 'A uniform was found in a passenger\'s suitcase. It was planted to reinforce the idea that a stranger in disguise committed the crime.' },
-            { title: 'The Handkerchief with "H"', icon: ' handkerchief ', description: 'A handkerchief with the initial "H" was left to frame Mrs. Hubbard, but Princess Dragomiroff claimed it, creating deliberate confusion.' },
+            { title: 'The Handkerchief with "H"', icon: '⬜', description: 'A handkerchief with the initial "H" was left to frame Mrs. Hubbard, but Princess Dragomiroff claimed it, creating deliberate confusion.' },
             { title: 'The Pipe Cleaner', icon: '🧹', description: 'A pipe cleaner was left to point to Colonel Arbuthnot, the only passenger who smoked a pipe, as another false clue.' },
             { title: 'The Scarlet Kimono', icon: '👘', description: 'Seen in the hallway and later found in Poirot\'s own luggage, it was a bold and absurd clue designed to baffle and point to no one in particular.' },
             { title: 'The Burned Note (Key Clue)', icon: '🔥', description: 'The murderers\' only mistake. Poirot recovered a fragment of a burned note that read "...remember little Daisy Armstrong." This clue revealed Ratchett\'s true identity and the motive for revenge.' }
@@ -202,7 +202,7 @@
             { q: "Describe Hercule Poirot's method of investigation.", a: "He uses psychology and logic, what he calls his 'little grey cells.' He observes people's behavior and finds contradictions in their stories rather than looking for physical clues." },
             { q: "How did the passengers try to confuse Poirot?", a: "They deliberately planted many false and contradictory clues, like the handkerchief, the pipe cleaner, the scarlet kimono, and the open window, to create chaos and make it impossible to pinpoint a single culprit." },
             { q: "What was the one clue that revealed the true motive for the murder?", a: "It was a fragment of a burned note that Poirot found. On it, the words '...remember little Daisy Armstrong' could be read, which connected the murder to the old case." },
-            { q: "Poirot presents two solutions at the end. What are they?", a: "The first solution is that an unknown assassin boarded the train, killed Ratchett, and escaped. The second, and the true one, is that the twelve passengers did it together as an act of collective justice." },
+            { q: "Poirot presents two solutions at the end. What are they, and which one was the truth?", a: "The first solution is that an unknown assassin boarded the train, killed Ratchett, and escaped. The second, and the true one, is that the twelve passengers did it together as an act of collective justice." },
             { q: "Why do you think Poirot decided to lie to the police?", a: "Because he believed that the passengers had delivered a form of justice that the law had failed to provide. He saw Ratchett as a 'wild beast' and the passengers not as criminals, but as people seeking justice for a failed system." }
         ];
 
@@ -249,7 +249,6 @@
                 charactersGrid.appendChild(card);
             }
 
-            // --- BUG FIX STARTS HERE ---
             function openModal(char) {
                 modalBody.innerHTML = `
                     <h2 class="text-3xl font-bold text-[#4A3728] mb-4 font-display flex items-center"><span class="text-4xl mr-4">${char.icon}</span>${char.name}</h2>
@@ -283,7 +282,6 @@
                     content.classList.remove('opacity-0', 'scale-95');
                 }, 300); 
             }
-            // --- BUG FIX ENDS HERE ---
             
             charactersData.forEach(createCharacterCard);
             closeModalBtn.addEventListener('click', closeModal);
@@ -362,3 +360,4 @@
     </script>
 </body>
 </html>
+
