@@ -216,8 +216,6 @@
             const closeModalBtn = document.getElementById('close-modal-btn');
             
             const solutionContent = document.getElementById('solution-content');
-            const solution1Btn = document.getElementById('solution1-btn');
-            const solution2Btn = document.getElementById('solution2-btn');
             const solutionBtns = document.querySelectorAll('.solution-btn');
 
             const quizQuestion = document.getElementById('quiz-question');
@@ -238,9 +236,7 @@
             navLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
-                    // The initial section is 'inicio' in Spanish, but the data-target is 'home' in English.
-                    // A small fix to make sure the first tab works correctly after translation.
-                    const target = e.target.dataset.target === 'inicio' ? 'home' : e.target.dataset.target;
+                    const target = e.target.dataset.target;
                     showSection(target);
                 });
             });
@@ -253,6 +249,7 @@
                 charactersGrid.appendChild(card);
             }
 
+            // --- BUG FIX STARTS HERE ---
             function openModal(char) {
                 modalBody.innerHTML = `
                     <h2 class="text-3xl font-bold text-[#4A3728] mb-4 font-display flex items-center"><span class="text-4xl mr-4">${char.icon}</span>${char.name}</h2>
@@ -263,18 +260,30 @@
                         <p class="text-green-800"><strong>Motive for Revenge:</strong> ${char.motive}</p>
                     </div>
                 `;
+                const content = modal.querySelector('.modal-content');
+                
                 modal.classList.remove('hidden');
+                modal.classList.add('opacity-0');
+                content.classList.add('opacity-0', 'scale-95');
+
                 setTimeout(() => {
-                    modal.querySelector('.modal-backdrop').classList.add('opacity-100');
-                    modal.querySelector('.modal-content').classList.add('transform', 'scale-100', 'opacity-100');
+                    modal.classList.remove('opacity-0');
+                    content.classList.remove('opacity-0', 'scale-95');
                 }, 10);
             }
 
             function closeModal() {
-                modal.querySelector('.modal-backdrop').classList.remove('opacity-100');
-                modal.querySelector('.modal-content').classList.remove('transform', 'scale-100', 'opacity-100');
-                setTimeout(() => modal.classList.add('hidden'), 300);
+                const content = modal.querySelector('.modal-content');
+                modal.classList.add('opacity-0');
+                content.classList.add('opacity-0', 'scale-95');
+
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('opacity-0');
+                    content.classList.remove('opacity-0', 'scale-95');
+                }, 300); 
             }
+            // --- BUG FIX ENDS HERE ---
             
             charactersData.forEach(createCharacterCard);
             closeModalBtn.addEventListener('click', closeModal);
@@ -348,13 +357,7 @@
                 showAnswerBtn.disabled = true;
             });
 
-            // Initial setup to show the home section
             showSection('home');
-            // Correctly set the active state for the first nav link
-            document.querySelector('.nav-link[data-target="home"]').classList.add('active');
-            document.querySelector('.nav-link[data-target="inicio"]')?.classList.remove('active');
-
-
         });
     </script>
 </body>
